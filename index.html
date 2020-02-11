@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hello Database</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />  
+    
+  <link rel="apple-touch-icon" href="images/hello-icon-152.png"> 
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+  <meta name="theme-color" content="white"/>
+  <meta name="theme-color" content="white"/>  
+  <meta name="apple-mobile-web-app-capable" content="yes">  
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"> 
+  <meta name="apple-mobile-web-app-title" content="Hello World"> 
+  <meta name="msapplication-TileImage" content="images/hello-icon-144.png">  
+  <meta name="msapplication-TileColor" content="#FFFFFF">  
+</head> 
+    
+<script type="text/javascript">
+                 //prefixes of implementation that we want to test
+         window.indexedDB = window.indexedDB || window.mozIndexedDB || 
+         window.webkitIndexedDB || window.msIndexedDB;
+         
+         //prefixes of window.IDB objects
+         window.IDBTransaction = window.IDBTransaction || 
+         window.webkitIDBTransaction || window.msIDBTransaction;
+         window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || 
+         window.msIDBKeyRange
+         
+         if (!window.indexedDB) {
+            window.alert("Your browser doesn't support a stable version of IndexedDB.")
+         }
+         
+         const productsData = [
+            { id: "1", name: "Red Men T-Shirt", price: "$3.99"},
+            { id: "2", name: "Pink Women Shorts", price: "$5.99" }
+         ];
+         var db;
+         var request = window.indexedDB.open("EXAMPLE_DB2", 1);
+         
+         request.onerror = function(event) {
+            console.log("error: ");
+         };
+         
+         request.onsuccess = function(event) {
+            db = request.result;
+            console.log("success: "+ db);
+         };
+         
+         request.onupgradeneeded = function(event) {
+            var db = event.target.result;
+            var objectStore = db.createObjectStore("products", {keyPath: "id"});
+            
+            for (var i in productsData) {
+               objectStore.add(productsData[i]);
+            }
+         }
+         
+
+         
+
+         
+         function add() {
+            var vID = document.getElementById("txtid"); 
+            var vproduct = document.getElementById("txtproduct"); 
+            var vprice = document.getElementById("txtprice"); 
+             
+             var request = db.transaction(["products"], "readwrite")
+            .objectStore("products")
+            .add({ id: vID.value, name: vproduct.value,  price: vprice.value });            
+             
+             
+            //var request = db.transaction(["products"], "readwrite")
+            //.objectStore("products")
+            //.add({ id: "5", name: "Padini Shirt",  price: "$10.99" });
+            
+            request.onsuccess = function(event) {
+               alert("Data has been added to your database.");
+            };
+            
+            request.onerror = function(event) {
+               alert("Unable to add data is aready exist in your database! ");
+            }
+         }
+         
+         function remove() {
+            var request = db.transaction(["products"], "readwrite")
+            .objectStore("products")
+            .delete("5");
+            
+            request.onsuccess = function(event) {
+               alert("Data has been removed from your database.");
+            };
+         }
+    
+    
+        function doGetTextvalue(){
+            var tOne = document.getElementById("txtone");
+            alert(tOne.value);
+            
+        }
+    
+    
+</script>    
+<body class="fullscreen">
+  <div class="container">
+    <h1 class="title">Hello Database Example</h1>
+      
+    <input type="text" id ="txtid" value="" name="txtid" /> 
+    <input type="text" id ="txtproduct" value="" name="txtproduct" /> 
+    <input type="text" id ="txtprice" value="" name="txtprice" />   
+      
+    <!--<button onclick = "doGetTextvalue()">Submit Textbox </button>   -->
+    <button onclick = "add()">Add data </button>
+    <button onclick = "remove()">Delete data </button>  
+  </div>
+
+</body>
+</html>
